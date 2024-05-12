@@ -1,10 +1,7 @@
 
-import 'package:excalci/firebase_options.dart';
-import 'package:excalci/views/register_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:developer' as dev show log; 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -67,17 +64,38 @@ class _LoginViewState extends State<LoginView> {
                 email: email, 
                 password: password
                 );
+                dev.log(UserCredential.toString());
+                final user = UserCredential.user;
+                if (user != null){
+                  if (user.emailVerified==true){
+                    dev.log("Email is verified!...");
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/excalci/',
+                      (_)=> false,
+                      );
+                  }
+                  else{
+                    dev.log("Email isn't verified!...");
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/verify_email/',
+                      (_)=> false,
+                      );
+                  }               
+                }
+                else{
+                  dev.log("User is null");
+                }
               } on FirebaseAuthException catch(e){
                 if (e.code== 'user-not-found'){
-                  print('No user found for that email');
+                  dev.log('No user found for that email');
                 } else if (e.code== 'wrong-password'){
-                  print('Wrong password provided for that user');
+                  dev.log('Wrong password provided for that user');
                 
                 }
                 else{
-                  print("Sometihng went wrong!");
-                  print(e.runtimeType);
-                  print(e);
+                  dev.log("Sometihng went wrong!");
+                  dev.log(e.runtimeType.toString());
+                  dev.log(e.toString());
                 }
               }
       
