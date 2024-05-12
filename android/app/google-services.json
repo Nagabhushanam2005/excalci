@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "994561119749",
+    "project_id": "excalci-10c97",
+    "storage_bucket": "excalci-10c97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994561119749:android:179414da0448e0c707ae6c",
+        "android_client_info": {
+          "package_name": "com.example.excalci"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5R4ADvkANEuqD8H03J44T8Jzz5fDimeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994561119749:android:97ea52d3f898071b07ae6c",
+        "android_client_info": {
+          "package_name": "com.excalci"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5R4ADvkANEuqD8H03J44T8Jzz5fDimeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
