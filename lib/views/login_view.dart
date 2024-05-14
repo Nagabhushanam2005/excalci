@@ -1,4 +1,6 @@
 
+import 'package:excalci/constants/routes.dart';
+import 'package:excalci/utilities/show_error_dialogue.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev show log; 
@@ -70,14 +72,14 @@ class _LoginViewState extends State<LoginView> {
                   if (user.emailVerified==true){
                     dev.log("Email is verified!...");
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/excalci/',
+                      excalciRoute,
                       (_)=> false,
                       );
                   }
                   else{
                     dev.log("Email isn't verified!...");
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/verify_email/',
+                      verifyEmailRoute,
                       (_)=> false,
                       );
                   }               
@@ -86,17 +88,23 @@ class _LoginViewState extends State<LoginView> {
                   dev.log("User is null");
                 }
               } on FirebaseAuthException catch(e){
+                dev.log(e.code);
                 if (e.code== 'user-not-found'){
                   dev.log('No user found for that email');
-                } else if (e.code== 'wrong-password'){
+                  await showErrorDialog(context, "No user found for that email");
+                } else if (e.code== 'wrong-password' || e.code== 'invalid-credential'){
                   dev.log('Wrong password provided for that user');
-                
+                  await showErrorDialog(context, "Wrong username or password");
                 }
                 else{
                   dev.log("Sometihng went wrong!");
-                  dev.log(e.runtimeType.toString());
-                  dev.log(e.toString());
+                  await showErrorDialog(context, "Something went wrong! Please try again later \n Error: ${e.code}");
+
                 }
+              }
+              catch(e){
+                dev.log(e.toString());
+                await showErrorDialog(context, "Something went wrong! Please try again later \n Error: ${e.toString()}");
               }
       
                 
@@ -106,7 +114,7 @@ class _LoginViewState extends State<LoginView> {
             ElevatedButton(
               onPressed: (){
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/register/',
+                  registerRoute,
                    (route) => false
                    );
               },
@@ -117,4 +125,3 @@ class _LoginViewState extends State<LoginView> {
   }
   
 }
-

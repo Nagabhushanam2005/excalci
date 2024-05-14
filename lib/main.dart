@@ -1,4 +1,5 @@
 // App to track budget and expenses.
+import 'package:excalci/constants/routes.dart';
 import 'package:excalci/firebase_options.dart';
 import 'package:excalci/views/login_view.dart';
 import 'package:excalci/views/verify_email.dart';
@@ -18,10 +19,10 @@ void main() {
         ),
         home: const HomePage(),
         routes: {
-          '/login/': (context) => const LoginView(),
-          '/register/': (context) => const RegisterView(),
-          '/verify_email/': (context) => const VerifyEmail(),
-          '/excalci/':(context) => const excalciView(),
+          loginRoute: (context) => const LoginView(),
+          registerRoute: (context) => const RegisterView(),
+          verifyEmailRoute: (context) => const VerifyEmail(),
+          excalciRoute:(context) => const excalciView(),
         
         },
       ),
@@ -94,7 +95,7 @@ class _excalciViewState extends State<excalciView> {
                   if (shouldLogout){
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login/',
+                      loginRoute,
                       (_)=> false,
                       );
                   }

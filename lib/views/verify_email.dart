@@ -1,4 +1,5 @@
 
+import 'package:excalci/constants/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
       body: Column(
             children: [
+              const Text("We've sent a email verifiaction. Please open the link to verify. \n"),
               const Text('Please verify your email address'),
               ElevatedButton(
                 onPressed: () async {
@@ -28,6 +30,12 @@ class _VerifyEmailState extends State<VerifyEmail> {
                 },
                 child: const Text('Send Verification Email'),
               ),
+              ElevatedButton(onPressed: (){
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route) => false);
+              },
+              child: const Text('Restart')),
+              
             ],
           ),
     );
