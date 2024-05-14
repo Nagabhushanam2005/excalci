@@ -1,11 +1,13 @@
 import 'package:excalci/services/auth/auth_provider.dart';
 import 'package:excalci/services/auth/auth_user.dart';
+import 'package:excalci/services/auth/firebase_auth_provider.dart';
 
 class AuthService implements AuthProvider{
   final AuthProvider authProvider;
-
-  AuthService({required this.authProvider});
+  const AuthService(this.authProvider);
   
+  factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
+
   @override
   AuthUser? get currentUser =>authProvider.currentUser;
   
