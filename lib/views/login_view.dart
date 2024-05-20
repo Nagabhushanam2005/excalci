@@ -1,7 +1,8 @@
 
 import 'package:excalci/constants/routes.dart';
-import 'package:excalci/utilities/show_error_dialogue.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:excalci/services/auth/auth_exceptions.dart';
+import 'package:excalci/services/auth/auth_service.dart';
+import 'package:excalci/utilities/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev show log; 
 class LoginView extends StatefulWidget {
@@ -62,14 +63,10 @@ class _LoginViewState extends State<LoginView> {
               final email =_email.text;
               final password = _password.text;
               try {
-                final UserCredential= await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: email, 
-                password: password
-                );
-                dev.log(UserCredential.toString());
-                final user = UserCredential.user;
+                await AuthService.firebase().logIn(email: email, password: password);
+                final user = AuthService.firebase().currentUser;
                 if (user != null){
-                  if (user.emailVerified==true){
+                  if (user.isEmailVerified==true){
                     dev.log("Email is verified!...");
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       excalciRoute,
@@ -87,25 +84,23 @@ class _LoginViewState extends State<LoginView> {
                 else{
                   dev.log("User is null");
                 }
-              } on FirebaseAuthException catch(e){
-                dev.log(e.code);
-                if (e.code== 'user-not-found'){
-                  dev.log('No user found for that email');
-                  await showErrorDialog(context, "No user found for that email");
-                } else if (e.code== 'wrong-password' || e.code== 'invalid-credential'){
-                  dev.log('Wrong password provided for that user');
-                  await showErrorDialog(context, "Wrong username or password");
-                }
-                else{
-                  dev.log("Sometihng went wrong!");
-                  await showErrorDialog(context, "Something went wrong! Please try again later \n Error: ${e.code}");
-
-                }
+              } on UserNotFoundException catch(e){
+                dev.log(e.toString());
+                await showErrorDialog(context, "No user found for that email");
+              } on WrongPasswordException catch(e){
+                dev.log(e.toString());
+                await showErrorDialog(context, "Wrong username or password");
+              }  on GenericAuthException catch(e){
+                dev.log(e.toString());
+                await showErrorDialog(context, "Something went wrong! Please try again later.");
               }
               catch(e){
                 dev.log(e.toString());
-                await showErrorDialog(context, "Something went wrong! Please try again later \n Error: ${e.toString()}");
+                await showErrorDialog(context,  "Something went wrong! Please try again later \n Error: ${e.toString()}");
               }
+              
+              
+              
       
                 
             },

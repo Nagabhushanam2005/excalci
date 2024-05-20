@@ -22,4 +22,7 @@ class AuthService implements AuthProvider{
   
   @override
   Future<void> verifyEmail() => authProvider.verifyEmail();
+  
+  @override
+  Future<void> initializeApp() => authProvider.initializeApp();
 }

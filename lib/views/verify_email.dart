@@ -1,6 +1,6 @@
 
 import 'package:excalci/constants/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:excalci/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -24,14 +24,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
               const Text('Please verify your email address'),
               ElevatedButton(
                 onPressed: () async {
-                  final user=FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
+                  await AuthService.firebase().verifyEmail();
                   
                 },
                 child: const Text('Send Verification Email'),
               ),
               ElevatedButton(onPressed: (){
-                FirebaseAuth.instance.signOut();
+                AuthService.firebase().logOut();
                 Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (route) => false);
               },
               child: const Text('Restart')),

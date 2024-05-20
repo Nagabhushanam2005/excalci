@@ -1,10 +1,12 @@
 //import all files in auth
+import 'package:excalci/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart'
   show FirebaseAuth ,FirebaseAuthException;
 import 'package:excalci/services/auth/auth_exceptions.dart';
 import 'package:excalci/services/auth/auth_provider.dart';
 import 'package:excalci/services/auth/auth_user.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'dart:developer' as dev show log;
 class FirebaseAuthProvider implements AuthProvider{
   @override
   AuthUser? get currentUser {
@@ -32,9 +34,9 @@ class FirebaseAuthProvider implements AuthProvider{
       return user;
 
     } on FirebaseAuthException catch(e){
-        if (e.code== 'user-not-found'){
+        if (e.code.toString()== 'user-not-found'){
           throw UserNotFoundException();
-        } else if (e.code== 'wrong-password' || e.code== 'invalid-credential'){
+        } else if (e.code.toString()== 'wrong-password' || e.code.toString()== 'invalid-credential'){
           throw WrongPasswordException();
         }
         else{
@@ -74,16 +76,17 @@ class FirebaseAuthProvider implements AuthProvider{
       }
       return user;
     } on FirebaseAuthException catch(e){
-      if (e.code == 'weak-password'){
+      dev.log(e.code.toString());
+      if (e.code.toString() == 'weak-password'){
         throw WeakPasswordException();
-      } else if (e.code == 'email-already-in-use'){
+      } else if (e.code.toString() == 'email-already-in-use'){
         throw EmailInUseException();
       }
-      else if(e.code =='invalid-email'){
+      else if(e.code.toString() =='invalid-email'){
         throw InvalidEmailException();
       }
       else{
-        // dev.log(e.code);
+        // dev.log(e.code.toString());
         throw GenericAuthException();
     }
     } catch (e){
@@ -101,6 +104,13 @@ class FirebaseAuthProvider implements AuthProvider{
     else{
       throw UserNotLoggedException();
     }
+  }
+  
+  @override
+  Future<void> initializeApp() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
 }
