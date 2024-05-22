@@ -1,6 +1,7 @@
 // App to track budget and expenses.
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
+import 'package:excalci/views/excalci/excalci_add_expense_view.dart';
 import 'package:excalci/views/excalci/excalci_home_view.dart';
 import 'package:excalci/views/excalci/excalci_view.dart';
 import 'package:excalci/views/login_view.dart';
@@ -14,7 +15,11 @@ void main() {
   runApp(MaterialApp(
         title: 'ExCalci',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          //Dark theme
+          brightness: Brightness.dark,
+          primaryColor: Colors.deepPurple,
+          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+
           useMaterial3: true,
         ),
         home: const HomePage(),
@@ -24,6 +29,8 @@ void main() {
           verifyEmailRoute: (context) => const VerifyEmail(),
           excalciRoute:(context) => const excalciView(),
           excalciHomeRoute:(context) => const excalciHomeView(),
+          excalciAddExpenseRoute:(context) => const excalciAddExpenseView(),
+          
         
         },
       ),
@@ -59,7 +66,7 @@ class HomePage extends StatelessWidget {
                 return const LoginView();
               }
             default:
-              return const Center(child: const CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
           }
           
         }

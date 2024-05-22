@@ -43,6 +43,11 @@ class _BottomBarViewState extends State<BottomBarView>
     animationController?.forward();
     super.initState();
   }
+  @override
+  void dispose() {
+    animationController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +60,7 @@ class _BottomBarViewState extends State<BottomBarView>
             return Transform(
               transform: Matrix4.translationValues(0.0, 0.0, 0.0),
               child: PhysicalShape(
-                color: AppTheme.white,
+                color: AppTheme.background,
                 elevation: 16.0,
                 clipper: TabClipper(
                     radius: Tween<double>(begin: 0.0, end: 1.0)
@@ -153,18 +158,18 @@ class _BottomBarViewState extends State<BottomBarView>
                     child: Container(
                       // alignment: Alignment.center,s
                       decoration: BoxDecoration(
-                        color: AppTheme.nearlyDarkBlue,
+                        color: AppTheme.background,
                         gradient: LinearGradient(
                             colors: [
-                              AppTheme.nearlyDarkBlue,
-                              HexColor('#6A88E5'),
+                              AppTheme.background,
+                              HexColor('#000421'),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight),
                         shape: BoxShape.circle,
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: AppTheme.nearlyDarkBlue
+                              color: AppTheme.theme
                                   .withOpacity(0.4),
                               offset: const Offset(8.0, 16.0),
                               blurRadius: 16.0),

@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excalci/services/cloud/cloud_accounts.dart';
-import 'package:excalci/services/cloud/cloud_categories.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/cloud_storage_constants.dart';
 import 'package:excalci/services/cloud/cloud_storage_exceptions.dart';
-// import 'package:flutter/foundation.dart';
 
 class FirebaseCloudStorage {
-  final notes = FirebaseFirestore.instance.collection('notes');
-
   final expenses = FirebaseFirestore.instance.collection('Expenses');
   final categories = FirebaseFirestore.instance.collection('Categories');
   final accounts = FirebaseFirestore.instance.collection('Accounts');
@@ -23,7 +19,7 @@ class FirebaseCloudStorage {
     final document = await expenses.add({
       ownerUserIdFieldName: ownerUserId,
       categoryFieldName: '',
-      accountFieldName: {},
+      accountFieldName: '',
       amountFieldName: 0.0,
       timeFieldName: DateTime.now(),
       descFieldName: '',
@@ -35,7 +31,7 @@ class FirebaseCloudStorage {
       documentId: fetchedExpense.id,
       ownerUserId: ownerUserId,
       category: '',
-      account: {},
+      account: '',
       amount: 0.0,
       date: DateTime.now(),
       desc: '',
@@ -59,7 +55,7 @@ class FirebaseCloudStorage {
   Future<void> updateExpense({
     required String documentId,
     required String category,
-    required Map<String,bool> account,
+    required String account,
     required double amount,
     required DateTime date,
     required String desc,
@@ -86,65 +82,39 @@ class FirebaseCloudStorage {
   Stream<Iterable<CloudExpense>> allExpenses({required String ownerUserId}) {
     final allExpenses = expenses
         .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+        .where(categoryFieldName, isEqualTo: 'Expense')
         .snapshots()
         .map((event) => event.docs.map((doc) => CloudExpense.fromSnapshot(doc)));
     return allExpenses;
   }
 
+  //Get all incomes
 
-  //Get all categories
-
-  Stream<Iterable<CloudCategories>> allCategories({required String ownerUserId}) {
-    final allCategories = categories
+  Stream<Iterable<CloudExpense>> allIncomes({required String ownerUserId}) {
+    final allIncomes = expenses
         .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+        .where(categoryFieldName, isEqualTo: 'Income')
         .snapshots()
-        .map((event) => event.docs.map((doc) => CloudCategories.fromSnapshot(doc)));
-    return allCategories;
+        .map((event) => event.docs.map((doc) => CloudExpense.fromSnapshot(doc)));
+    return allIncomes;
   }
+  
+  //Get all expenses for a category
 
-  //Create a new category
-
-  Future<CloudCategories> createNewCategory({required String ownerUserId}) async {
-    final document = await categories.add({
-      ownerUserIdFieldName: ownerUserId,
-      categoryExpenseFieldName: {},
-      categoryIncomeFieldName:  {},
-    });
-    final fetchedCategory = await document.get();
-    return CloudCategories(
-      documentId: fetchedCategory.id,
-      ownerUserId: ownerUserId,
-      categoryExpense: categoryExpenseDefault,
-      categoryIncome: categoryIncomeDefault,
-    );
+  Stream<Iterable<CloudExpense>> allExpensesForCategory({
+    required String ownerUserId,
+    required String category,
+  }) {
+    final allExpensesForCategory = expenses
+        .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+        .where(categoryFieldName, isEqualTo: 'Expense')
+        .where(useCategoryFieldName, isEqualTo: category)
+        .snapshots()
+        .map((event) => event.docs.map((doc) => CloudExpense.fromSnapshot(doc)));
+    return allExpensesForCategory;
   }
-
-  //Update a category
-
-  Future<void> updateCategory({
-    required String documentId,
-    required Map<String,String> categoryExpense,
-    required Map<String,String> categoryIncome,
-  }) async {
-    try {
-      await categories.doc(documentId).update({
-        categoryExpenseFieldName: categoryExpense,
-        categoryIncomeFieldName: categoryIncome,
-      });
-    } catch (e) {
-      throw CouldNotUpdateCategoryException();
-    }
-  }
-
-  //Delete a category
-
-  Future<void> deleteCategory({required String documentId}) async {
-    try {
-      await categories.doc(documentId).delete();
-    } catch (e) {
-      throw CouldNotDeleteCategoryException();
-    }
-  }
+  
+  
 
   //create accounts default for every user
 

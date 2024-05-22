@@ -8,7 +8,7 @@ class CloudExpense {
   final String ownerUserId;
   final String category;
   final String useCategory;
-  final Map<String,bool> account;
+  final String account;
   final double amount;
   final DateTime date;
   final String desc;
@@ -31,7 +31,7 @@ class CloudExpense {
         documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
         category = snapshot.data()[categoryFieldName],
-        account = (snapshot.data()[accountFieldName] as Map<String,bool>),
+        account = snapshot.data()[accountFieldName],
         amount = snapshot.data()[amountFieldName],
         date = (snapshot.data()[timeFieldName] as Timestamp).toDate(),
         desc = snapshot.data()[descFieldName],

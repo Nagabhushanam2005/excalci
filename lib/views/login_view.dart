@@ -1,4 +1,5 @@
 
+import 'package:excalci/app_theme.dart';
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_exceptions.dart';
 import 'package:excalci/services/auth/auth_service.dart';
@@ -31,7 +32,8 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title:  Text('Login',
+        style: AppTheme.title,),
       
       ),
       body: Column(
@@ -104,7 +106,8 @@ class _LoginViewState extends State<LoginView> {
       
                 
             },
-            child: const Text('Login')
+            child: Text('Login',
+            style: AppTheme.button,)
             ),
             ElevatedButton(
               onPressed: (){
@@ -113,7 +116,8 @@ class _LoginViewState extends State<LoginView> {
                    (route) => false
                    );
               },
-             child: const Text("New User? Register here!"))
+             child: Text("New User? Register here!",
+             style: AppTheme.button,))
         ],
       ),
     );

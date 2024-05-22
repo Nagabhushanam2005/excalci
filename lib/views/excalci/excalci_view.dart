@@ -7,6 +7,7 @@ import 'package:excalci/utilities/Widgets/bottom_nav_bar.dart';
 import 'package:excalci/utilities/Widgets/tab_icon_data.dart';
 import 'package:excalci/utilities/dialogs/logout_dialog.dart';
 import 'package:excalci/views/excalci/excalci_accounts_view.dart';
+// import 'package:excalci/views/excalci/excalci_add_expense_view.dart';
 import 'package:excalci/views/excalci/excalci_analysis_view.dart';
 import 'package:excalci/views/excalci/excalci_home_view.dart';
 import 'package:excalci/views/excalci/excalci_user_view.dart';
@@ -26,9 +27,8 @@ class _excalciViewState extends State<excalciView> {
 
   String get userEmail => AuthService.firebase().currentUser!.email!;
 
-  Widget internalBody = const Center(
-    child: Text('Welcome to ExCalci!'),
-  );
+  Widget internalBody = const excalciHomeView();
+  String valueAppBar ='ExCalci';
   AnimationController? animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
@@ -44,29 +44,35 @@ class _excalciViewState extends State<excalciView> {
           tabIconsList: tabIconsList,
           addClick: () {
             dev.log('Add Clicked!');
+            Navigator.of(context).pushNamed(excalciAddExpenseRoute);
+            //disable the bottomBar
           },
           changeIndex: (int index) {
             dev.log(index.toString());
             if (index == 0) {
               setState(() {
                 internalBody = const excalciHomeView();
+                valueAppBar= 'ExCalci';
               });
               
             }
             else if(index == 1){
               setState(() {
                 internalBody = const excalciAnalysisView();
+                valueAppBar='Your Expenditure Analysis';
               });
               
             }
             else if(index == 2){
               setState(() {
                 internalBody = const excalciAccountsView();
+                valueAppBar='Accounts';
               });
             }
             else if(index == 3){
               setState(() {
                 internalBody = const excalciUserView();
+                valueAppBar='User';
               });
             }
           },
@@ -93,11 +99,15 @@ class _excalciViewState extends State<excalciView> {
   }
   @override
   Widget build(BuildContext context) {
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
+    //get current route
+    dev.log(isKeyboardOpen.toString());
     return Container(
-      color: AppTheme.chipBackground,
+      color: AppTheme.theme,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('ExCalci'),
+          title: Text(valueAppBar),
           actions: [
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
@@ -140,6 +150,7 @@ class _excalciViewState extends State<excalciView> {
             );
           }
         ),
+        // bottomNavigationBar: isKeyboardOpen? null: 
       ),
     );
   }

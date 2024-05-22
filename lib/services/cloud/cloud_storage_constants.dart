@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const expensesDoc="""
 Mode  (map)
 
@@ -100,47 +102,33 @@ const accountsCollectionName = 'Accounts';
 const categoryExpenseFieldName = 'Expenses';
 const categoryIncomeFieldName = 'Income';
 
-const categoryExpenseFieldName_c1 = 'c1';
-const categoryExpenseFieldName_c2 = 'c2';
-const categoryExpenseFieldName_c3 = 'c3';
-const categoryExpenseFieldName_c4 = 'c4';
-const categoryExpenseFieldName_c5 = 'c5';
-const categoryExpenseFieldName_c6 = 'c6';
-const categoryExpenseFieldName_c7 = 'c7';
-const categoryExpenseFieldName_c8 = 'c8';
-const categoryExpenseFieldName_c9 = 'c9';
-const categoryExpenseFieldName_c10 = 'c10';
-const categoryExpenseFieldName_c11 = 'c11';
-const categoryExpenseFieldName_c12 = 'c12';
-
-
-const categoryIncomeFieldName_c1 = 'c1';
-const categoryIncomeFieldName_c2 = 'c2';
-const categoryIncomeFieldName_c3 = 'c3';
-const categoryIncomeFieldName_c4 = 'c4';
-
+//category: icondata
 const categoryExpenseDefault= {
-  categoryExpenseFieldName_c1: 'Food & Dining',
-  categoryExpenseFieldName_c2: 'Shopping',
-  categoryExpenseFieldName_c3: 'Travelling',
-  categoryExpenseFieldName_c4: 'Entertainment',
-  categoryExpenseFieldName_c5: 'Medical',
-  categoryExpenseFieldName_c6: 'Personal',
-  categoryExpenseFieldName_c7: 'Education',
-  categoryExpenseFieldName_c8: 'Bills / Utilites',
-  categoryExpenseFieldName_c9: 'Investments',
-  categoryExpenseFieldName_c10: 'Rent',
-  categoryExpenseFieldName_c11: 'Taxes',
-  categoryExpenseFieldName_c12: 'Others',
+  'Food & Dining': Icons.ramen_dining_outlined,
+  'Shopping': Icons.shopping_cart,
+  'Travelling': Icons.directions_bus,
+  'Entertainment': Icons.movie_creation_sharp,
+  'Medical': Icons.medical_services,
+  'Personal': Icons.self_improvement_sharp,
+  'Education': Icons.school,
+  'Bills / Utilites': Icons.topic_outlined,
+  'Investments': Icons.attach_money,
+  'Rent': Icons.house,
+  'Taxes': Icons.currency_rupee_sharp,
+  'Others': Icons.more_horiz,
 };
 
 const categoryIncomeDefault= {
-  categoryIncomeFieldName_c1: 'Salary',
-  categoryIncomeFieldName_c2: 'Sold Items',
-  categoryIncomeFieldName_c3: 'Part Time',
-  categoryIncomeFieldName_c4: 'Coupons / Cashback',
+  'Salary': Icons.currency_rupee_sharp,
+  'Sold Items': Icons.sell,
+  'Part Time': Icons.work_history,
+  'Coupons / Cashback': Icons.card_giftcard,
 };
 
+const accountsDefault= {
+  accountFieldName_Bank: Icons.account_balance,
+  accountFieldName_Cash: Icons.currency_rupee_sharp,
+};
 
 const accountFieldName_Bank = 'Bank';
 const accountFieldName_Cash = 'Cash';
