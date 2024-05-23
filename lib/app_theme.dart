@@ -5,15 +5,16 @@ class AppTheme {
   //theme colors
   static final Color primary = Color.fromARGB(255, 220, 199, 255);
   static final Color theme = Color(0x030637);
-  static final Color background = Color.fromARGB(100, 60, 7, 83);
+  static final Color background = Color.fromARGB(255, 60, 7, 83);
   static final Color buttons = Color.fromARGB(225, 197, 152, 212);
-  static final Color text = Color.fromARGB(100,145, 10, 103);
+  static final Color text = Color.fromARGB(255, 227, 141, 200);
   static final Color white = Color.fromARGB(255, 200, 200, 200);
 
+
   static final TextStyle title = TextStyle(
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: FontWeight.bold,
-    color: primary,
+    color: white,
   );
   static final TextStyle subtitle =  TextStyle(
     fontSize: 18,
@@ -42,5 +43,18 @@ class AppTheme {
     color: Colors.green,
   );
 
-
+  static final TextStyle expense= TextStyle(
+    fontSize: 16,
+    color: Color.fromARGB(255, 255, 187, 184),
+  );
+  static final TextStyle income= TextStyle(
+    fontSize: 16,
+    color: Color.fromARGB(255, 194, 255, 194),
+  );
+  static final TextStyle desc= TextStyle(
+    fontSize: 14,
+  );
+  static final TextStyle date= TextStyle(
+    fontSize: 14,
+  );
 }

@@ -170,7 +170,7 @@ class _BottomBarViewState extends State<BottomBarView>
                         boxShadow: <BoxShadow>[
                           BoxShadow(
                               color: AppTheme.theme
-                                  .withOpacity(0.4),
+                                  .withOpacity(0.3),
                               offset: const Offset(8.0, 16.0),
                               blurRadius: 16.0),
                         ],

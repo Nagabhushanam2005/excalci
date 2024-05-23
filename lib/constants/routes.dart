@@ -7,3 +7,6 @@ const excalciAccountsRoute="/excalci/accounts";
 const excalciAnalysisRoute="/excalci/analysis";
 const excalciUserRoute="/excalci/user";
 const excalciAddExpenseRoute="/excalci/addExpense";
+const excalciSeeAllRoute="/excalci/allExpenses";
+const excalciAddBudgetRoute='/excalci/addBudget';
+

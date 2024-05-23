@@ -3,27 +3,26 @@ import 'package:excalci/services/cloud/cloud_storage_constants.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-class CloudCategories {
-
+class CloudBudget {
   final String documentId;
   final String ownerUserId;
-  final Map<String,String> categoryExpense;
-  final Map<String,String> categoryIncome;
+  final double budget;
+  final double month;
 
-  CloudCategories( {
+  
+  CloudBudget( {
     required this.documentId,
     required this.ownerUserId,
-    required this.categoryExpense,
-    required this.categoryIncome,
+    required this.budget,
+    required this.month,
   });
 
-  CloudCategories.fromSnapshot(
+  CloudBudget.fromSnapshot(
     QueryDocumentSnapshot<Map<String, dynamic>> snapshot,)   : 
         documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
-        categoryExpense = (snapshot.data()[categoryExpenseFieldName] as Map<String,String>),
-        categoryIncome = (snapshot.data()[categoryIncomeFieldName] as Map<String,String>);
+        budget = snapshot.data()[budgetFieldName],
+        month = snapshot.data()[budgetMonthFieldName];
 
-  
   
 }

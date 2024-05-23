@@ -2,7 +2,9 @@
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/views/excalci/excalci_add_expense_view.dart';
+import 'package:excalci/views/excalci/excalci_add_update_budget_view.dart';
 import 'package:excalci/views/excalci/excalci_home_view.dart';
+import 'package:excalci/views/excalci/excalci_see_all.dart';
 import 'package:excalci/views/excalci/excalci_view.dart';
 import 'package:excalci/views/login_view.dart';
 import 'package:excalci/views/verify_email.dart';
@@ -30,8 +32,8 @@ void main() {
           excalciRoute:(context) => const excalciView(),
           excalciHomeRoute:(context) => const excalciHomeView(),
           excalciAddExpenseRoute:(context) => const excalciAddExpenseView(),
-          
-        
+          excalciSeeAllRoute:(context) => const seeAll(),
+          excalciAddBudgetRoute:(context) => const excalciAddBudgetView(),
         },
       ),
     

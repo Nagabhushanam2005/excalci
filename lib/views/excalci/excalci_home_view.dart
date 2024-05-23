@@ -1,8 +1,17 @@
+
+import 'dart:ffi';
+import 'dart:math';
+
+import 'package:excalci/app_theme.dart';
+import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev show log;
+import 'package:getwidget/getwidget.dart';
+
+ 
 //displays the user name
 // displays the users expenses total and income total
 //display % bar of budget used
@@ -18,6 +27,10 @@ class _excalciHomeViewState extends State<excalciHomeView> {
 
   String ownerUserId=AuthService.firebase().currentUser!.id!;
   late final FirebaseCloudStorage _cloudService;
+  double expense=0;
+  double budget=1;
+  double percent=0.0;
+
 
   @override
   void initState() {
@@ -27,17 +40,220 @@ class _excalciHomeViewState extends State<excalciHomeView> {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     // return all expenses in LIGHT RED, incomes in green
-    return  Stack(
+    String toDate(DateTime date){
+      String k='';
+      k='${date.year}-${date.month}-${date.day}';
+      return k;
+    }
+    //get percent used
+
+
+    
+
+    return  ListView(
       children: [
+        //monthly overview
         Column(
           children: [
             const SizedBox(height: 20,),
-            const Text('Your Expenses',style: TextStyle(fontSize: 20),),
+            Row(
+              children: [
+                const SizedBox(width: 10,),
+                Text('Monthly Overview:',style: AppTheme.title,),
+                const SizedBox(width: 20,),
+                
+              ],
+            ),
+            // const SizedBox(height: 10,),
+            Row(
+              children: [
+                const SizedBox(width: 15,),
+                SizedBox(
+                  width: 180,
+                  child: StreamBuilder<double>(
+                    stream: _cloudService.amountSpentOverMonth(ownerUserId: ownerUserId),
+                    builder: (context,snapshot){
+                      if (snapshot.connectionState==ConnectionState.waiting){
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError){
+                        return const Center(child: Text('An error occurred!'));
+                      }
+                      if (snapshot.hasData){
+                        final expenses=snapshot.data!;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 1,
+                          itemBuilder: (context,index){
+                            expense=expenses;
+
+                              return Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                      color: const Color.fromARGB(169, 216, 77, 77),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      child: ListTile(
+                                        subtitle: const Text("Spent"),
+                                        title: Text("₹ $expense"),
+                                        titleTextStyle:  AppTheme.title,
+                                        subtitleTextStyle: AppTheme.expense,
+                  
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            
+                          },
+                        );
+                      }
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 1,
+                          itemBuilder: (context,index){
+                              return Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                      color: const Color.fromARGB(169, 216, 77, 77),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      child: ListTile(
+                                        subtitle: const Text("Spent"),
+                                        title: const Text("₹ 0.0"),
+                                        titleTextStyle:  AppTheme.title,
+                                        subtitleTextStyle: AppTheme.expense,
+                  
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            
+                          },
+                        );
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 180,
+                  child: StreamBuilder<double>(
+                    stream: _cloudService.amountIncomeOverMonth(ownerUserId: ownerUserId),
+                    builder: (context,snapshot){
+                      if (snapshot.connectionState==ConnectionState.waiting){
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError){
+                        return const Center(child: Text('An error occurred!'));
+                      }
+                      if (snapshot.hasData){
+                        final expenses=snapshot.data!;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 1,
+                          itemBuilder: (context,index){
+                            final expense=expenses;
+                            //Green box for incomes
+                            // grey box for expenses
+                              return Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    // Image.asset('assets/images/th.jpg',
+                                    // width: 50,
+                                    // height: 50,
+                                    // ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        // image: DecorationImage(
+                                        //         image: AssetImage('assets/images/cash_trans.jpg'),
+                                        //         fit: BoxFit.cover,
+                                        //       ),
+                                        
+                                        color: const Color.fromARGB(169, 77, 216, 86),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      child: ListTile(
+                                        
+                                        subtitle: const Text("Earned"),
+                                        title: Text("₹ "+expense.toString()),
+                                        titleTextStyle:  AppTheme.title,
+                                        subtitleTextStyle: AppTheme.income,
+                  
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              );
+                            
+                          },
+                        );
+                      }
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 1,
+                          itemBuilder: (context,index){
+                              return Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                      color: const Color.fromARGB(169, 216, 77, 77),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                      child: ListTile(
+                                        subtitle: const Text("Earned"),
+                                        title: const Text("₹ 0.0"),
+                                        titleTextStyle:  AppTheme.title,
+                                        subtitleTextStyle: AppTheme.expense,
+                  
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            
+                          },
+                        );
+                    },
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20,),
+            
+          ],
+        ),
+        const SizedBox(height: 20,),
+        Column(
+          children: [
+            const SizedBox(height: 20,),
+            Row(
+              children: [
+                const SizedBox(width: 10,),
+                Text('Your Recent Transactions:',style: AppTheme.title,),
+                const SizedBox(width: 20,),
+                TextButton(
+                  child: const Text('See all'),
+                  onPressed: (){
+                    Navigator.of(context).pushNamed(excalciSeeAllRoute);
+                  },
+                )
+              ],
+            ),
+            // const SizedBox(height: 10,),
             StreamBuilder<Iterable<CloudExpense>>(
-              stream: _cloudService.allExpenses(ownerUserId: ownerUserId),
+              stream: _cloudService.sortedExpenses(ownerUserId: ownerUserId),
               builder: (context,snapshot){
                 if (snapshot.connectionState==ConnectionState.waiting){
                   return const Center(child: CircularProgressIndicator());
@@ -47,16 +263,64 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 }
                 if (snapshot.hasData){
                   final expenses=snapshot.data!;
-                  dev.log(expenses.toString());
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: expenses.length,
+                    itemCount: expenses.length>4?4:expenses.length,
                     itemBuilder: (context,index){
                       final expense=expenses.elementAt(index);
-                      return ListTile(
-                        title: Text(expense.desc),
-                        subtitle: Text(expense.amount.toString()),
-                      );
+                      //Green box for incomes
+                      // grey box for expenses
+                      if(expense.category=='Expense') {
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                color: const Color.fromARGB(169, 67, 67, 67),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: ListTile(
+                                  subtitle: Text(expense.desc.toString()),
+                                  title: Text("₹"+expense.amount.toString()),
+                                  trailing: Text(toDate(expense.date)),
+                                  titleTextStyle:  AppTheme.income,
+                                  subtitleTextStyle: AppTheme.desc,
+                                  leadingAndTrailingTextStyle: AppTheme.date,
+
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      else{
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            children: [
+                              //rounded container
+                              Container(
+                                // width: 800,
+                                // height: 80,
+                                decoration: BoxDecoration(
+                                color: const Color.fromARGB(169, 100, 152, 100),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: ListTile(
+                                  subtitle: Text(expense.desc.toString()),
+                                  title: Text("₹"+expense.amount.toString()),
+                                  trailing: Text(toDate(expense.date)),
+                                  titleTextStyle:  AppTheme.income,
+                                  subtitleTextStyle: AppTheme.desc,
+                                  leadingAndTrailingTextStyle: AppTheme.date,
+
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
                   );
                 }
@@ -64,36 +328,99 @@ class _excalciHomeViewState extends State<excalciHomeView> {
               },
             ),
             const SizedBox(height: 20,),
-            const Text('Your Incomes',style: TextStyle(fontSize: 20),),
-            const SizedBox(height: 20,),
-            StreamBuilder<Iterable<CloudExpense>>(
-              stream: _cloudService.allIncomes(ownerUserId: ownerUserId),
-              builder: (context,snapshot){
-                if (snapshot.connectionState==ConnectionState.waiting){
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError){
-                  return const Center(child: Text('An error occurred!'));
-                }
-                if (snapshot.hasData){
-                  final incomes=snapshot.data!;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: incomes.length,
-                    itemBuilder: (context,index){
-                      final income=incomes.elementAt(index);
-                      return ListTile(
-                        title: Text(income.desc),
-                        subtitle: Text(income.amount.toString()),
-                      );
-                    },
-                  );
-                }
-                return const Center(child: Text('No incomes found!'));
-              },
-            ),
+            
           ],
         ),
+        //Budget vs Expenses percentage bar with budget in yellow and fill percent of it in red for expenses
+        const SizedBox(height: 20,),
+        Row(
+          children: [
+            const SizedBox(width: 10,),
+            Text('Monthly Overview:',style: AppTheme.title,),
+            const SizedBox(width: 20,),
+            
+          ],
+        ),
+        const SizedBox(height: 20,),
+
+
+        StreamBuilder<double>(
+                  stream: _cloudService.currentMonthBudget(ownerUserId: ownerUserId),
+                  builder: (context,snapshot){
+                    if (snapshot.connectionState==ConnectionState.waiting){
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError){
+                      return const Center(child: Text('An error occurred!'));
+                    }
+                    if (snapshot.hasData){
+                      budget=snapshot.data!;
+                      percent=expense/budget;
+
+                      return  TextButton(
+                                  onPressed: (){
+                                    //pop up budget view
+                                    Navigator.of(context).pushNamed(excalciAddBudgetRoute);
+                                  },
+                                  child: Text("₹$budget",style: AppTheme.income,)
+                                );
+                    }
+                    return  TextButton(
+                                  onPressed: (){
+                                    //pop up budget view
+                                    Navigator.of(context).pushNamed(excalciAddBudgetRoute);
+                                  },
+                                  child: Text("₹0.0",style: AppTheme.income,)
+                                );
+                  },
+                ), 
+
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Container(
+            child: StreamBuilder<double>(
+              stream: _cloudService.percentageUsed(ownerUserId: ownerUserId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('An error occurred!'));
+                }
+                if (snapshot.hasData) {
+                  percent = snapshot.data!;
+                  return GFProgressBar(
+                    percentage: percent/100,
+                    lineHeight: 20,
+                    alignment: MainAxisAlignment.spaceBetween,
+                    
+                    backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                    progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                    child: Text('${percent.floor()}%', textAlign: TextAlign.end,
+                                  style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                  )
+                );
+
+              }
+              return GFProgressBar(
+                    percentage: 0.0,
+                    lineHeight: 20,
+                    alignment: MainAxisAlignment.spaceBetween,
+                    
+                    backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                    progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                    child: Text('0%', textAlign: TextAlign.end,
+                                  style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                  )
+                );
+            },
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 100,),
+
       ],
     );
   }
