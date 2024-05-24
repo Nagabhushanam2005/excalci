@@ -1,7 +1,8 @@
 // App to track budget and expenses.
+import 'package:excalci/app_theme.dart';
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
-import 'package:excalci/views/excalci/excalci_add_expense_view.dart';
+import 'package:excalci/views/excalci/excalci_add_update_expense_view.dart';
 import 'package:excalci/views/excalci/excalci_add_update_budget_view.dart';
 import 'package:excalci/views/excalci/excalci_home_view.dart';
 import 'package:excalci/views/excalci/excalci_see_all.dart';
@@ -16,14 +17,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
         title: 'ExCalci',
-        theme: ThemeData(
-          //Dark theme
-          brightness: Brightness.dark,
-          primaryColor: Colors.deepPurple,
-          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-
-          useMaterial3: true,
-        ),
+        theme: AppTheme.darkTheme,
         home: const HomePage(),
         routes: {
           loginRoute: (context) => const LoginView(),

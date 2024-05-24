@@ -5,6 +5,9 @@ import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:excalci/utilities/Widgets/bottom_popup_calculator.dart';
 import 'package:excalci/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as dev show log;
+
+
 
 // Text(
 //   "Your text",
@@ -30,6 +33,7 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
 
   DateTime? selectedDate=DateTime.now();
   late final TextEditingController amt;
+  double month=0;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
     if (widgetBudget != null) {
       _cloudBudget = widgetBudget;
       amt.text = widgetBudget.budget.toString();
+      month=widgetBudget.month;
       return widgetBudget;
     }
 
@@ -94,6 +99,11 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
   @override
   Widget build(BuildContext context) {
     void getDate() async{
+      if(month!=0.0){
+         selectedDate=DateTime.parse('${month.toString().substring(0,4)}-${month.toString().substring(4,6)}-01');
+         dev.log(selectedDate.toString());
+         return;
+      }
       final DateTime? picked=await showDatePicker(
         context: context,
         initialDate: selectedDate!,

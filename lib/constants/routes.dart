@@ -10,3 +10,9 @@ const excalciAddExpenseRoute="/excalci/addExpense";
 const excalciSeeAllRoute="/excalci/allExpenses";
 const excalciAddBudgetRoute='/excalci/addBudget';
 
+class DisplayEI{
+  bool income=false;
+  bool expense=false;
+  DisplayEI({required this.income,required this.expense});
+
+}

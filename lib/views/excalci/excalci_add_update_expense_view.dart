@@ -61,6 +61,20 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
       _cloudExpense = widgetExpense;
       amt.text = widgetExpense.amount.toStringAsFixed(2);
       desc.text = widgetExpense.desc;
+      selectedDate = widgetExpense.date;
+      selectedAccount=widgetExpense.account;
+      selectedCategory=widgetExpense.useCategory;
+      category=widgetExpense.category;
+      if (category=='Expense'){
+        isSelected=[true,false];
+        modeString='Mode of payment:';
+        categories=categoryExpenseDefault;
+      }
+      else{
+        isSelected=[false,true];
+        modeString='Mode of reciept:';
+        categories=categoryIncomeDefault;
+      }
       return widgetExpense;
     }
 

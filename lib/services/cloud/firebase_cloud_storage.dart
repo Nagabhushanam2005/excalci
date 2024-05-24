@@ -7,9 +7,6 @@ import 'package:excalci/services/cloud/cloud_budget.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/cloud_storage_constants.dart';
 import 'package:excalci/services/cloud/cloud_storage_exceptions.dart';
-
-import 'dart:developer' as dev;
-
 class FirebaseCloudStorage {
   final expenses = FirebaseFirestore.instance.collection('Expenses');
   final categories = FirebaseFirestore.instance.collection('Categories');
@@ -303,15 +300,13 @@ class FirebaseCloudStorage {
     return double.parse('${now.year}${now.month}');
   }
 
-  Stream<double> currentMonthBudget({required String ownerUserId}) {
+  Stream<Iterable<CloudBudget>> currentMonthBudget({required String ownerUserId}) {
     var currentMonthBudget =budgets
         .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
         .where(budgetMonthFieldName, isEqualTo: currentYYYYMM().toInt())
         .snapshots()
         .map((event) => event.docs
-            .map((doc) => CloudBudget.fromSnapshot(doc))
-            .map((e) => e.budget)
-            .reduce((value, element) => value + element));   
+            .map((doc) => CloudBudget.fromSnapshot(doc)));   
     return currentMonthBudget;
   }
 

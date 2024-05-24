@@ -1,10 +1,9 @@
 
-import 'dart:ffi';
-import 'dart:math';
 
 import 'package:excalci/app_theme.dart';
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
+import 'package:excalci/services/cloud/cloud_budget.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +48,10 @@ class _excalciHomeViewState extends State<excalciHomeView> {
     }
     //get percent used
 
-
-    
+    var displayEI=DisplayEI(
+      income: true,
+      expense: true
+    );
 
     return  ListView(
       children: [
@@ -103,7 +104,16 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                         title: Text("₹ $expense"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
-                  
+                                        onTap: () {
+                                          var displayEI=DisplayEI(
+                                            income: true,
+                                            expense: true
+                                          );
+                                          displayEI.expense=true;
+                                          displayEI.income=false;
+                                          Navigator.of(context).pushNamed(excalciSeeAllRoute,arguments: displayEI);
+                                        
+                                        },
                                       ),
                                     ),
                                   ],
@@ -131,7 +141,16 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                         title: const Text("₹ 0.0"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
-                  
+                                        onTap: () {
+                                          var displayEI=DisplayEI(
+                                            income: true,
+                                            expense: true
+                                          );
+                                          displayEI.expense=true;
+                                          displayEI.income=false;
+                                          Navigator.of(context).pushNamed(excalciSeeAllRoute,arguments: displayEI);
+                                  
+                                        },
                                       ),
                                     ),
                                   ],
@@ -167,27 +186,27 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                 padding: const EdgeInsets.all(12.0),
                                 child: Column(
                                   children: [
-                                    // Image.asset('assets/images/th.jpg',
-                                    // width: 50,
-                                    // height: 50,
-                                    // ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        // image: DecorationImage(
-                                        //         image: AssetImage('assets/images/cash_trans.jpg'),
-                                        //         fit: BoxFit.cover,
-                                        //       ),
-                                        
                                         color: const Color.fromARGB(169, 77, 216, 86),
                                         borderRadius: BorderRadius.circular(12.0),
                                       ),
                                       child: ListTile(
                                         
                                         subtitle: const Text("Earned"),
-                                        title: Text("₹ "+expense.toString()),
+                                        title: Text("₹ $expense"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
-                  
+                                        onTap: () {
+                                          var displayEI=DisplayEI(
+                                            income: true,
+                                            expense: true
+                                          );
+                                          displayEI.expense=false;
+                                          displayEI.income=true;
+                                          Navigator.of(context).pushNamed(excalciSeeAllRoute,arguments: displayEI);
+                                    
+                                        },
                                       ),
                                     ),
 
@@ -216,7 +235,16 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                         title: const Text("₹ 0.0"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
-                  
+                                        onTap: () {
+                                          var displayEI=DisplayEI(
+                                            income: true,
+                                            expense: true
+                                          );  
+                                        displayEI.expense=false;
+                                        displayEI.income=true;
+                                        Navigator.of(context).pushNamed(excalciSeeAllRoute,arguments: displayEI);
+                                  
+                                        },
                                       ),
                                     ),
                                   ],
@@ -246,7 +274,10 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 TextButton(
                   child: const Text('See all'),
                   onPressed: (){
-                    Navigator.of(context).pushNamed(excalciSeeAllRoute);
+                    displayEI.expense=true;
+                    displayEI.income=true;
+
+                    Navigator.of(context).pushNamed(excalciSeeAllRoute,arguments: displayEI);
                   },
                 )
               ],
@@ -264,6 +295,8 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 if (snapshot.hasData){
                   final expenses=snapshot.data!;
                   return ListView.builder(
+                    //disable scroll
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: expenses.length>4?4:expenses.length,
                     itemBuilder: (context,index){
@@ -281,6 +314,11 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                                 child: ListTile(
+                                  onTap: () {
+                                    //pop up expense view
+                                    Navigator.of(context).pushNamed(excalciAddExpenseRoute,arguments: expense);
+                                  
+                                  },
                                   subtitle: Text(expense.desc.toString()),
                                   title: Text("₹"+expense.amount.toString()),
                                   trailing: Text(toDate(expense.date)),
@@ -314,7 +352,11 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                   titleTextStyle:  AppTheme.income,
                                   subtitleTextStyle: AppTheme.desc,
                                   leadingAndTrailingTextStyle: AppTheme.date,
-
+                                  onTap: () {
+                                    //pop up expense view
+                                    Navigator.of(context).pushNamed(excalciAddExpenseRoute,arguments: expense);
+                                  
+                                  },
                                 ),
                               ),
                             ],
@@ -336,44 +378,45 @@ class _excalciHomeViewState extends State<excalciHomeView> {
         Row(
           children: [
             const SizedBox(width: 10,),
-            Text('Monthly Overview:',style: AppTheme.title,),
-            const SizedBox(width: 20,),
-            
+            Text('Budget Overview:',style: AppTheme.title,),
+            const SizedBox(width: 0,),
+            StreamBuilder<Iterable<CloudBudget>>(
+              stream: _cloudService.currentMonthBudget(ownerUserId: ownerUserId),
+              builder: (context,snapshot){
+                if (snapshot.connectionState==ConnectionState.waiting){
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError){
+                  return const Center(child: Text('An error occurred!'));
+                }
+                if (snapshot.hasData){
+                  final budget=snapshot.data!.first;
+                  final value=budget.budget;
+
+
+                  return  TextButton(
+                    onPressed: (){
+                      //pop up budget view
+                      Navigator.of(context).pushNamed(excalciAddBudgetRoute,arguments: budget);
+                    },
+                    child: Text("Budget-₹$value",style: AppTheme.income,)
+                  );
+                }
+                return  TextButton(
+                  onPressed: (){
+                    //pop up budget view
+                    Navigator.of(context).pushNamed(excalciAddBudgetRoute);
+                  },
+                  child: Text("Budget-₹0.0",style: AppTheme.income,)
+                );
+              },
+            ),
           ],
         ),
         const SizedBox(height: 20,),
 
 
-        StreamBuilder<double>(
-                  stream: _cloudService.currentMonthBudget(ownerUserId: ownerUserId),
-                  builder: (context,snapshot){
-                    if (snapshot.connectionState==ConnectionState.waiting){
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError){
-                      return const Center(child: Text('An error occurred!'));
-                    }
-                    if (snapshot.hasData){
-                      budget=snapshot.data!;
-                      percent=expense/budget;
-
-                      return  TextButton(
-                                  onPressed: (){
-                                    //pop up budget view
-                                    Navigator.of(context).pushNamed(excalciAddBudgetRoute);
-                                  },
-                                  child: Text("₹$budget",style: AppTheme.income,)
-                                );
-                    }
-                    return  TextButton(
-                                  onPressed: (){
-                                    //pop up budget view
-                                    Navigator.of(context).pushNamed(excalciAddBudgetRoute);
-                                  },
-                                  child: Text("₹0.0",style: AppTheme.income,)
-                                );
-                  },
-                ), 
+        
 
 
         Padding(
@@ -406,8 +449,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
               return GFProgressBar(
                     percentage: 0.0,
                     lineHeight: 20,
-                    alignment: MainAxisAlignment.spaceBetween,
-                    
+                    alignment: MainAxisAlignment.spaceBetween, 
                     backgroundColor : const Color.fromARGB(169, 114, 114, 107),
                     progressBarColor: const Color.fromARGB(192, 207, 56, 56),
                     child: Text('0%', textAlign: TextAlign.end,
