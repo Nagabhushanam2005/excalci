@@ -22,3 +22,4 @@ class CouldNotUpdateBudgetException extends CloudStorageException {}
 // class CouldNotDeleteNoteException extends CloudStorageException {}
 class CouldNotDeleteExpenseException extends CloudStorageException {}
 class CouldNotDeleteBudgetException extends CloudStorageException {}
+class CouldNotDeleteAccountsException extends CloudStorageException {}

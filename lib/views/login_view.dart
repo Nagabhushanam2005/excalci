@@ -30,95 +30,142 @@ class _LoginViewState extends State<LoginView> {
   }
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        title:  Text('Login',
-        style: AppTheme.title,),
+      // appBar: AppBar(
+      //   title:  Text('Login',
+      //   style: AppTheme.title,),
       
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Email',
+      // ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ListView(
+          children: [
+            SizedBox(height: screenHeight * .12),
+              const Text(
+                'Welcome,',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                labelText: 'Password',
+              SizedBox(height: screenHeight * .01),
+              Text(
+                'Sign in to continue!',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: const Color.fromARGB(255, 188, 188, 188).withOpacity(.6),
+                ),
               ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final email =_email.text;
-              final password = _password.text;
-              try {
-                await AuthService.firebase().logIn(email: email, password: password);
-                final user = AuthService.firebase().currentUser;
-                if (user != null){
-                  if (user.isEmailVerified==true){
-                    dev.log("Email is verified!...");
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      excalciRoute,
-                      (_)=> false,
-                      );
-                  }
-                  else{
-                    dev.log("Email isn't verified!...");
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      verifyEmailRoute,
-                      (_)=> false,
-                      );
-                  }               
-                }
-                else{
-                  dev.log("User is null");
-                }
-              } on UserNotFoundException catch(e){
-                dev.log(e.toString());
-                await showErrorDialog(context, "No user found for that email");
-              } on WrongPasswordException catch(e){
-                dev.log(e.toString());
-                await showErrorDialog(context, "Wrong username or password");
-              }  on GenericAuthException catch(e){
-                dev.log(e.toString());
-                await showErrorDialog(context, "Something went wrong! Please try again later.");
-              }
-              catch(e){
-                dev.log(e.toString());
-                await showErrorDialog(context,  "Something went wrong! Please try again later \n Error: ${e.toString()}");
-              }
-              
-              
-              
-      
+              SizedBox(height: screenHeight * .12),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
                 
-            },
-            child: Text('Login',
-            style: AppTheme.button,)
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  )
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  )
+                ),
+              ),
             ),
             ElevatedButton(
-              onPressed: (){
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  registerRoute,
-                   (route) => false
-                   );
+              onPressed: () async {
+                final email =_email.text;
+                final password = _password.text;
+                try {
+                  await AuthService.firebase().logIn(email: email, password: password);
+                  final user = AuthService.firebase().currentUser;
+                  if (user != null){
+                    if (user.isEmailVerified==true){
+                      dev.log("Email is verified!...");
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        excalciRoute,
+                        (_)=> false,
+                        );
+                    }
+                    else{
+                      dev.log("Email isn't verified!...");
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        verifyEmailRoute,
+                        (_)=> false,
+                        );
+                    }               
+                  }
+                  else{
+                    dev.log("User is null");
+                  }
+                } on UserNotFoundException catch(e){
+                  dev.log(e.toString());
+                  await showErrorDialog(context, "No user found for that email");
+                } on WrongPasswordException catch(e){
+                  dev.log(e.toString());
+                  await showErrorDialog(context, "Wrong username or password");
+                }  on GenericAuthException catch(e){
+                  dev.log(e.toString());
+                  await showErrorDialog(context, "Something went wrong! Please try again later.");
+                }
+                catch(e){
+                  dev.log(e.toString());
+                  await showErrorDialog(context,  "Something went wrong! Please try again later \n Error: ${e.toString()}");
+                }
+                   
               },
-             child: Text("New User? Register here!",
-             style: AppTheme.button,))
-        ],
+              child: Text('Login',
+              style: AppTheme.button,)
+              ),
+
+              SizedBox(height: screenHeight*0.125,),
+              TextButton(
+                onPressed: (){
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    registerRoute,
+                     (route) => false
+                     );
+                },
+              //  child: Text("New User? Register here!",
+              //  style: AppTheme.button,))
+              child: RichText(
+                text: TextSpan(
+                  text: 'New User? ',
+                  style: TextStyle(
+                    color: AppTheme.buttons,
+                    fontSize: 16,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Register here!',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 107, 33, 243),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ),
+            
+          ],
+        ),
       ),
     );
   }

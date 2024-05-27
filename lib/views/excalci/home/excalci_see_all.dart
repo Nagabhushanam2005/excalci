@@ -27,6 +27,10 @@ class _seeAllState extends State<seeAll> {
     return k;
   }
 
+  int compare(CloudExpense a, CloudExpense b){
+      return b.date.compareTo(a.date);
+    }
+
   @override
   Widget build(BuildContext context) {
     final displayEI = context.getArgument<DisplayEI>();
@@ -58,7 +62,9 @@ class _seeAllState extends State<seeAll> {
                   return const Center(child: Text('An error occurred!'));
                 }
                 if (snapshot.hasData){
-                  final expenses=snapshot.data!;
+                  var expenses=snapshot.data!;
+                  expenses=expenses.toList()..sort(compare);
+                  
                   return ListView.builder(
                     //disable scroll
                     physics: const NeverScrollableScrollPhysics(),
@@ -67,8 +73,6 @@ class _seeAllState extends State<seeAll> {
                     itemBuilder: (context,index){
                       
                       final expense=expenses.elementAt(index);
-                      //Green box for incomes
-                      // grey box for expenses
                       if(expense.category=='Expense' && displayEI.expense) {
                         return Padding(
                           padding: const EdgeInsets.all(12.0),

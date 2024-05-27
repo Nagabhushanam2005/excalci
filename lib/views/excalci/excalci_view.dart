@@ -6,11 +6,11 @@ import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/utilities/Widgets/bottom_nav_bar.dart';
 import 'package:excalci/utilities/Widgets/tab_icon_data.dart';
 import 'package:excalci/utilities/dialogs/logout_dialog.dart';
-import 'package:excalci/views/excalci/excalci_accounts_view.dart';
+import 'package:excalci/views/excalci/accounts/excalci_accounts_view.dart';
 // import 'package:excalci/views/excalci/excalci_add_expense_view.dart';
-import 'package:excalci/views/excalci/excalci_analysis_view.dart';
-import 'package:excalci/views/excalci/excalci_home_view.dart';
-import 'package:excalci/views/excalci/excalci_user_view.dart';
+import 'package:excalci/views/excalci/budget_analysis/excalci_analysis_view.dart';
+import 'package:excalci/views/excalci/home/excalci_home_view.dart';
+import 'package:excalci/views/excalci/user/excalci_user_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev show log;
 
@@ -23,11 +23,11 @@ class excalciView extends StatefulWidget {
   @override
   State<excalciView> createState() => _excalciViewState();
 }
-class _excalciViewState extends State<excalciView> {
+class _excalciViewState extends State<excalciView>with TickerProviderStateMixin  {
 
   String get userEmail => AuthService.firebase().currentUser!.email!;
 
-  Widget internalBody = const excalciHomeView();
+  Widget internalBody=const excalciHomeView();
   String valueAppBar ='ExCalci';
   AnimationController? animationController;
 
@@ -88,13 +88,16 @@ class _excalciViewState extends State<excalciView> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
     super.initState();
   }
   
   @override
   void dispose() {
-    // TODO: implement dispose
+    animationController?.dispose();
     super.dispose();
   }
   @override

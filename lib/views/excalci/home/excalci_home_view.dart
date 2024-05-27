@@ -46,6 +46,10 @@ class _excalciHomeViewState extends State<excalciHomeView> {
       k='${date.year}-${date.month}-${date.day}';
       return k;
     }
+
+    int compare(CloudExpense a, CloudExpense b){
+      return b.date.compareTo(a.date);
+    }
     //get percent used
 
     var displayEI=DisplayEI(
@@ -195,6 +199,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                         
                                         subtitle: const Text("Earned"),
                                         title: Text("₹ $expense"),
+                                        // leading: Icon(Icons.arrow_circle_up_sharp),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
                                         onTap: () {
@@ -227,7 +232,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                      color: const Color.fromARGB(169, 216, 77, 77),
+                                      color: const Color.fromARGB(169, 77, 216, 86),
                                         borderRadius: BorderRadius.circular(12.0),
                                       ),
                                       child: ListTile(
@@ -293,7 +298,9 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                   return const Center(child: Text('An error occurred!'));
                 }
                 if (snapshot.hasData){
-                  final expenses=snapshot.data!;
+                  var expenses=snapshot.data!;
+                  expenses=expenses.toList()..sort(compare);
+                  
                   return ListView.builder(
                     //disable scroll
                     physics: const NeverScrollableScrollPhysics(),
@@ -433,17 +440,31 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 }
                 if (snapshot.hasData) {
                   percent = snapshot.data!;
-                  return GFProgressBar(
-                    percentage: percent/100,
-                    lineHeight: 20,
-                    alignment: MainAxisAlignment.spaceBetween,
-                    
-                    backgroundColor : const Color.fromARGB(169, 114, 114, 107),
-                    progressBarColor: const Color.fromARGB(192, 207, 56, 56),
-                    child: Text('${percent.floor()}%', textAlign: TextAlign.end,
-                                  style: TextStyle(fontSize: 14, color: AppTheme.primary),
-                                  )
-                );
+                  if(percent<=100) {
+                    return GFProgressBar(
+                      percentage: percent/100,
+                      lineHeight: 20,
+                      alignment: MainAxisAlignment.spaceBetween,
+                      
+                      backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                      progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                      child: Text('${percent.floor()}%', textAlign: TextAlign.end,
+                                    style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                    )
+                      );
+                  }
+                  else if(percent>100){
+                    return GFProgressBar(
+                      percentage: 1.0,
+                      lineHeight: 20,
+                      alignment: MainAxisAlignment.spaceBetween, 
+                      backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                      progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                      child: Text('100%', textAlign: TextAlign.end,
+                                    style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                    )
+                      );
+                  }
 
               }
               return GFProgressBar(

@@ -56,7 +56,7 @@ const accountFieldName_Bank_balance = 'balance';
 const accountFieldName_Bank_txns = 'txns';
 const accountFieldName_Bank_usedAmount = 'Used amount';
 
-const accountFieldName_Cash_usedPercent = 'Used percent';
+const accountFieldName_Cash_balance = 'balance';
 const accountFieldName_Cash_txns = 'txns';
 const accountFieldName_Cash_usedAmount = 'used_amt';
 
@@ -66,7 +66,7 @@ const BankDefault= {
     accountFieldName_Bank_txns: 0, 
   };
 const  CashDefault= {
-    accountFieldName_Cash_usedPercent: 0,
+    accountFieldName_Cash_balance: 0,
     accountFieldName_Cash_txns: 0,
     accountFieldName_Cash_usedAmount: 0,
   };
