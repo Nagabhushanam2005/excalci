@@ -1,12 +1,9 @@
 import 'package:excalci/app_theme.dart';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:excalci/services/auth/auth_service.dart';
-
-import 'dart:developer' as dev show log;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class excalciAnalysisView extends StatefulWidget {
   const excalciAnalysisView({super.key});
@@ -18,12 +15,18 @@ class excalciAnalysisView extends StatefulWidget {
 class _excalciAnalysisViewState extends State<excalciAnalysisView> {
   late final FirebaseCloudStorage _cloudService;
   String ownerUserId=AuthService.firebase().currentUser!.id!;
+  String selCurr='₹';
 
   @override
   void initState() {
     _cloudService=FirebaseCloudStorage();
-
     super.initState();
+    SharedPreferences.getInstance()
+      .then((prefs) {
+        setState(() {
+          selCurr=prefs.getString('currencyFormat')!;
+        });
+      });
   }
 
 
@@ -48,7 +51,10 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
 
   ];
   colorList.shuffle();
-    return Padding(
+  // print(curr);
+  // String selCurr=currency2[curr]?? '';
+
+  return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ListView(
         children: [
@@ -71,7 +77,6 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                       data!.forEach((key, value) {
                         sum += value;
                       });
-                      dev.log(sum.toString());
                       //if sum is 0, then no data is available
                       if (sum == 0) {
                         return const Center(child: Text('No data available!'));
@@ -178,7 +183,6 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                       data!.forEach((key, value) {
                         sum += value;
                       });
-                      dev.log(sum.toString());
                       //if sum is 0, then no data is available
                       if (sum == 0) {
                         return const Center(child: Text('No data available!'));
@@ -268,7 +272,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text("₹${data.last['Cash']}",
+                                        Text("$selCurr${data.last['Cash']}",
                                           style: AppTheme.income,
                                           ),
                                         SizedBox(
@@ -285,7 +289,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                             ),
                                           ),
                                         ),
-                                        Text("₹${data.first['Cash']}",
+                                        Text("$selCurr${data.first['Cash']}",
                                           style: AppTheme.expense,
                                           ),
                                         
@@ -296,7 +300,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text("₹${data.last['Bank']}",
+                                        Text("$selCurr${data.last['Bank']}",
                                           style: AppTheme.income,
                                           ),
                                         SizedBox(
@@ -311,7 +315,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                             ),
                                           ),
                                         ),
-                                        Text("₹${data.first['Bank']}",
+                                        Text("$selCurr${data.first['Bank']}",
                                           style: AppTheme.expense,
                                           ),
                                         
@@ -326,7 +330,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text("₹${data.last['Total']}",
+                                        Text("$selCurr${data.last['Total']}",
                                           style: AppTheme.income,
                                           ),
                                         SizedBox(
@@ -344,7 +348,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                             ),
                                           ),
                                         ),
-                                        Text("₹${data.first['Total']}",
+                                        Text("$selCurr${data.first['Total']}",
                                           style: AppTheme.expense,
                                           ),
                                       ],
@@ -390,7 +394,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                                     Text("Average transaction value:",
                                       style: AppTheme.subtitle,
                                     ),
-                                    Text("₹$data",
+                                    Text("$selCurr$data",
                                       style: AppTheme.button,
                                     ),
                                   ],
@@ -446,7 +450,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                             return Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("    Transactions over ₹1000:",
+                                    Text("    Transactions over $selCurr 1000:",
                                       style: AppTheme.subtitle,
                                     ),
                                     Text("$data",

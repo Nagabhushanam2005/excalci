@@ -5,7 +5,7 @@ import 'package:excalci/services/auth/auth_exceptions.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/utilities/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log; 
+ 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -97,35 +97,27 @@ class _LoginViewState extends State<LoginView> {
                   final user = AuthService.firebase().currentUser;
                   if (user != null){
                     if (user.isEmailVerified==true){
-                      dev.log("Email is verified!...");
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         excalciRoute,
                         (_)=> false,
                         );
                     }
                     else{
-                      dev.log("Email isn't verified!...");
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         verifyEmailRoute,
                         (_)=> false,
                         );
                     }               
                   }
-                  else{
-                    dev.log("User is null");
-                  }
+
                 } on UserNotFoundException catch(e){
-                  dev.log(e.toString());
                   await showErrorDialog(context, "No user found for that email");
                 } on WrongPasswordException catch(e){
-                  dev.log(e.toString());
                   await showErrorDialog(context, "Wrong username or password");
                 }  on GenericAuthException catch(e){
-                  dev.log(e.toString());
                   await showErrorDialog(context, "Something went wrong! Please try again later.");
                 }
                 catch(e){
-                  dev.log(e.toString());
                   await showErrorDialog(context,  "Something went wrong! Please try again later \n Error: ${e.toString()}");
                 }
                    

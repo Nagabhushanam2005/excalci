@@ -7,7 +7,8 @@ import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:excalci/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class seeAll extends StatefulWidget {
   const seeAll({super.key});
@@ -19,7 +20,10 @@ class seeAll extends StatefulWidget {
 class _seeAllState extends State<seeAll> {
   final String ownerUserId=AuthService.firebase().currentUser!.id!;
   final FirebaseCloudStorage _cloudService=FirebaseCloudStorage();
+  String currency='₹';
 
+
+  
   
   String toDate(DateTime date){
     String k='';
@@ -29,13 +33,22 @@ class _seeAllState extends State<seeAll> {
 
   int compare(CloudExpense a, CloudExpense b){
       return b.date.compareTo(a.date);
-    }
+  }
+
+  @override
+  void initState() {
+    SharedPreferences.getInstance()
+    .then((prefs) {
+      setState(() {
+        currency=prefs.getString('currencyFormat')??currency;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final displayEI = context.getArgument<DisplayEI>();
-    dev.log(displayEI!.expense.toString());
-    dev.log(displayEI.income.toString());
+    final displayEI = context.getArgument<DisplayEI>()!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Transactions')
@@ -85,7 +98,7 @@ class _seeAllState extends State<seeAll> {
                                 ),
                                 child: ListTile(
                                   subtitle: Text(expense.desc.toString()),
-                                  title: Text("₹${expense.amount}"),
+                                  title: Text("$currency${expense.amount}"),
                                   trailing: Text(toDate(expense.date)),
                                   titleTextStyle:  AppTheme.income,
                                   subtitleTextStyle: AppTheme.desc,
@@ -116,7 +129,7 @@ class _seeAllState extends State<seeAll> {
                                 ),
                                 child: ListTile(
                                   subtitle: Text(expense.desc.toString()),
-                                  title: Text("₹${expense.amount}"),
+                                  title: Text("$currency${expense.amount}"),
                                   trailing: Text(toDate(expense.date)),
                                   titleTextStyle:  AppTheme.income,
                                   subtitleTextStyle: AppTheme.desc,

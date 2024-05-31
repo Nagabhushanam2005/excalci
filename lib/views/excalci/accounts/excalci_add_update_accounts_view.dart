@@ -1,4 +1,4 @@
-import 'package:excalci/app_theme.dart';
+import 'package:excalci/constants/preferences_const.dart';
 import 'package:excalci/constants/routes.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/services/cloud/cloud_accounts.dart';
@@ -6,7 +6,9 @@ import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:excalci/utilities/Widgets/bottom_popup_calculator.dart';
 import 'package:excalci/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -35,19 +37,24 @@ class _excalciAddAccountViewState extends State<excalciAddAccountView> {
   DateTime? selectedDate=DateTime.now();
   late final TextEditingController amt;
   double month=0;
+  String currency='Rupee';
+  IconData icon=Icons.currency_rupee_sharp;
 
   @override
   void initState() {
     _cloudService=FirebaseCloudStorage();
     amt=TextEditingController();
     super.initState();
+    
   }
   
 
 
   Future<CloudAccounts> createOrGetAccounts(BuildContext context, DisplayAcc? editor) async{
     final widgetAccount = context.getArgument<Set>()?.last;
-    dev.log("hii:"+ widgetAccount.toString());
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+        currency=prefs.getString('currencyFormat')??currency;
+        icon=currencyName[prefs.getString('currencyFormatName')] ?? Icons.currency_rupee_sharp;
     if (widgetAccount != null) {
       _cloudAccounts = widgetAccount;
       if(editor!=null){
@@ -62,11 +69,9 @@ class _excalciAddAccountViewState extends State<excalciAddAccountView> {
     }
 
     final existingAccount = _cloudAccounts;
-    dev.log(existingAccount.toString());
     if (existingAccount != null) {
       return existingAccount;
     }
-
     final newAccount = await _cloudService.createAccounts(ownerUserId: ownerUserId);
     _cloudAccounts = newAccount;
     return newAccount;
@@ -86,15 +91,10 @@ class _excalciAddAccountViewState extends State<excalciAddAccountView> {
 
   void _updateAccountViewState() async{
     final editor = context.getArgument<Set>()?.first;
-    dev.log("updating");
     if(_cloudAccounts==null){
-      dev.log("why");
       return;
     }
     if(_cloudAccounts!=null && amt.text.isNotEmpty){
-      dev.log((editor.bank).toString());
-      dev.log((editor.cash).toString());
-
       if(editor.bank){
         final bank={
           'Used amount': _cloudAccounts!.Bank['Used amount'],
@@ -139,6 +139,7 @@ class _excalciAddAccountViewState extends State<excalciAddAccountView> {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
                 _setupListener();
+
                 return Column(
                         children: [
                           Expanded(
@@ -148,8 +149,8 @@ class _excalciAddAccountViewState extends State<excalciAddAccountView> {
                                 children: <Widget>[
                                   Row(
                                     children: [
-                                      const Icon(
-                                        Icons.currency_rupee_sharp,
+                                      Icon(
+                                        icon,
                                         size: 35,
                                       ),
                                       const SizedBox(width: 10),

@@ -4,7 +4,9 @@ import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/services/cloud/cloud_accounts.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer'as dev show log;
+
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class excalciAccountsView extends StatefulWidget {
   const excalciAccountsView({super.key});
@@ -16,11 +18,22 @@ class excalciAccountsView extends StatefulWidget {
 class _excalciAccountsViewState extends State<excalciAccountsView> {
   final _cloudService=FirebaseCloudStorage();
   final String? ownerUserId=AuthService.firebase().currentUser?.id;
+  String currency='₹';
 
-
+  @override
+  void initState() {
+    SharedPreferences.getInstance()
+    .then((prefs) {
+      setState(() {
+        currency=prefs.getString('currencyFormat')?? currency;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    
     return Center(
         child: Column(
           children: [
@@ -51,8 +64,6 @@ class _excalciAccountsViewState extends State<excalciAccountsView> {
                       }
                       if (!snapshot.data!.isEmpty){
                         final expenses=snapshot.data!;
-                        
-                        dev.log(expenses.toString());
                         return ListView.builder(
                           shrinkWrap: true,
                           itemCount: 1,
@@ -68,7 +79,7 @@ class _excalciAccountsViewState extends State<excalciAccountsView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Bank"),
-                                        title: Text("₹ ${expenses.first.Bank.values.elementAt(0)}"),
+                                        title: Text("$currency ${expenses.first.Bank.values.elementAt(0)}"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
                                         onTap: () {
@@ -99,7 +110,7 @@ class _excalciAccountsViewState extends State<excalciAccountsView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Bank"),
-                                        title: const Text("₹ 0.0"),
+                                        title: Text("$currency 0.0"),
                                         
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
@@ -148,7 +159,7 @@ class _excalciAccountsViewState extends State<excalciAccountsView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Cash"),
-                                        title: Text("₹ ${expenses.first.Cash.values.elementAt(0)}"),
+                                        title: Text("$currency ${expenses.first.Cash.values.elementAt(0)}"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
                                         onTap: () {
@@ -179,7 +190,7 @@ class _excalciAccountsViewState extends State<excalciAccountsView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Cash"),
-                                        title: const Text("₹ 0.0"),
+                                        title: Text("$currency 0.0"),
                                         
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,

@@ -44,10 +44,7 @@ const categoryIncomeDefault= {
   'Coupons / Cashback': Icons.card_giftcard,
 };
 
-const accountsDefault= {
-  accountFieldName_Bank: Icons.account_balance,
-  accountFieldName_Cash: Icons.currency_rupee_sharp,
-};
+
 
 const accountFieldName_Bank = 'Bank';
 const accountFieldName_Cash = 'Cash';

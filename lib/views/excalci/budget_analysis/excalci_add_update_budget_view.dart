@@ -1,11 +1,14 @@
 import 'package:excalci/app_theme.dart';
+import 'package:excalci/constants/preferences_const.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/services/cloud/cloud_budget.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:excalci/utilities/Widgets/bottom_popup_calculator.dart';
 import 'package:excalci/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -34,6 +37,7 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
   DateTime? selectedDate=DateTime.now();
   late final TextEditingController amt;
   double month=0;
+  IconData icon=Icons.currency_rupee_sharp;
 
   @override
   void initState() {
@@ -46,6 +50,8 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
 
   Future<CloudBudget> createOrGetBudget(BuildContext context) async{
     final widgetBudget = context.getArgument<CloudBudget>();
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+      icon=currencyName[prefs.getString('currencyFormatName')] ?? Icons.currency_rupee_sharp;
     if (widgetBudget != null) {
       _cloudBudget = widgetBudget;
       amt.text = widgetBudget.budget.toString();
@@ -57,7 +63,6 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
     if (existingBudget != null) {
       return existingBudget;
     }
-
     final newBudget = await _cloudService.createBudget(ownerUserId: ownerUserId,budget: 0.0,month: _cloudService.currentYYYYMM());
     _cloudBudget = newBudget;
     return newBudget;
@@ -98,10 +103,10 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
   
   @override
   Widget build(BuildContext context) {
+
     void getDate() async{
       if(month!=0.0){
          selectedDate=DateTime.parse('${month.toString().substring(0,4)}-${month.toString().substring(4,6)}-01');
-         dev.log(selectedDate.toString());
          return;
       }
       final DateTime? picked=await showDatePicker(
@@ -182,7 +187,7 @@ class _excalciAddBudgetViewState extends State<excalciAddBudgetView> {
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.currency_rupee_sharp,
+                                      icon,
                                       size: 35,
                                     ),
                                     SizedBox(width: 10),

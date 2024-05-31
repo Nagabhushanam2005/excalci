@@ -6,7 +6,7 @@ import 'package:excalci/services/auth/auth_exceptions.dart';
 import 'package:excalci/services/auth/auth_provider.dart';
 import 'package:excalci/services/auth/auth_user.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:developer' as dev show log;
+
 class FirebaseAuthProvider implements AuthProvider{
   @override
   AuthUser? get currentUser {
@@ -76,7 +76,6 @@ class FirebaseAuthProvider implements AuthProvider{
       }
       return user;
     } on FirebaseAuthException catch(e){
-      dev.log(e.code.toString());
       if (e.code.toString() == 'weak-password'){
         throw WeakPasswordException();
       } else if (e.code.toString() == 'email-already-in-use'){
@@ -86,11 +85,9 @@ class FirebaseAuthProvider implements AuthProvider{
         throw InvalidEmailException();
       }
       else{
-        // dev.log(e.code.toString());
         throw GenericAuthException();
     }
     } catch (e){
-      // dev.log(e.toString());
       throw GenericAuthException();
     }
   }

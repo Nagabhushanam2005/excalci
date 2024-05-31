@@ -4,7 +4,6 @@ import 'package:excalci/services/auth/auth_exceptions.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/utilities/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log; 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -89,19 +88,14 @@ class _RegisterViewState extends State<RegisterView> {
                     AuthService.firebase().verifyEmail();
                     Navigator.of(context).pushNamed(verifyEmailRoute);
                 } on WeakPasswordException {
-                  dev.log('The password provided is too weak.');
                   await showErrorDialog(context, "Weak password!...");
                 } on EmailInUseException {
-                  dev.log('An account already exists for that email.');
                   await showErrorDialog(context, "An account already exists for that email.");
                 } on InvalidEmailException {
-                  dev.log('The email provided is invalid.');
                   await showErrorDialog(context, "The email provided is invalid.");
                 } on GenericAuthException catch(e){
-                  dev.log('Something went wrong! \n ${e.toString()}');
                   await showErrorDialog(context, "Something went wrong! Try again.}");
                 } catch (e){
-                  dev.log(e.toString());
                   await showErrorDialog(context, "Something went wrong! \n ${e.toString()}");
                 }
                 

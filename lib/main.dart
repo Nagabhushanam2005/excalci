@@ -12,14 +12,16 @@ import 'package:excalci/views/login_view.dart';
 import 'package:excalci/views/verify_email.dart';
 import 'package:flutter/material.dart';
 import 'views/register_view.dart';
-import 'dart:developer'as dev show log;
+
  
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+
+  // WidgetsFlutterBinding.ensureInitial
+  // ized();
   runApp(MaterialApp(
         title: 'ExCalci',
-        theme: AppTheme.darkTheme,
         home: const HomePage(),
+        theme: AppTheme.darkTheme,
         routes: {
           loginRoute: (context) => const LoginView(),
           registerRoute: (context) => const RegisterView(),
@@ -49,14 +51,12 @@ class HomePage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             case ConnectionState.done:
               final user=AuthService.firebase().currentUser;
-              dev.log(user.toString());
+              (user.toString());
               if (user != null){
                 if (user.isEmailVerified==true){
-                  dev.log("Email is verified!...");
                   return const excalciView();
                 }
                 else{
-                  dev.log("Email isn't verified!...");
                   return const VerifyEmail();
                 }               
               }
@@ -72,5 +72,3 @@ class HomePage extends StatelessWidget {
       );
   }
 }
-
-

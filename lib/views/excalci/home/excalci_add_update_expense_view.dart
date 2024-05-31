@@ -1,4 +1,5 @@
 import 'package:excalci/app_theme.dart';
+import 'package:excalci/constants/preferences_const.dart';
 import 'package:excalci/services/auth/auth_service.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/cloud_storage_constants.dart';
@@ -7,7 +8,9 @@ import 'package:excalci/utilities/Widgets/bottom_popup_calculator.dart';
 import 'package:excalci/utilities/Widgets/bottom_single_select.dart';
 import 'package:excalci/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Text(
 //   "Your text",
@@ -33,7 +36,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
 
   List<bool> isSelected=[true,false];
   Map<String,IconData> categories=categoryExpenseDefault;
-  Map<String,IconData> acc_items=accountsDefault;
+  Map<String,IconData> acc_items=modeItems;
   String selectedCategory='Choose';
   String selectedAccount='Cash';
   String modeString="Mode of payment:";
@@ -42,21 +45,27 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
   late final TextEditingController amt;
   late final TextEditingController desc;
   String? category;
+  String currency='';
+  IconData icon=Icons.currency_rupee_sharp;
+  String defaultMode='Cash';
 
   @override
   void initState() {
     _cloudService=FirebaseCloudStorage();
     amt=TextEditingController();
     desc=TextEditingController();
-
-
     super.initState();
+   
   }
   
 
 
   Future<CloudExpense> createOrGetExpense(BuildContext context) async{
-    final widgetExpense = context.getArgument<CloudExpense>();
+    CloudExpense? widgetExpense = context.getArgument<CloudExpense>();
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+        currency=prefs.getString('currencyFormat')??currency;
+        icon=currencyName[prefs.getString('currencyFormatName')] ?? Icons.currency_rupee_sharp;
+        selectedAccount=prefs.getString('defaultMode')??defaultMode;
     if (widgetExpense != null) {
       _cloudExpense = widgetExpense;
       amt.text = widgetExpense.amount.toStringAsFixed(2);
@@ -78,11 +87,12 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
       return widgetExpense;
     }
 
-    final existingNote = _cloudExpense;
+    CloudExpense? existingNote = _cloudExpense;
     if (existingNote != null) {
       return existingNote;
     }
-    final newNote = await _cloudService.createNewExpense(ownerUserId: ownerUserId);
+
+    CloudExpense newNote = await _cloudService.createNewExpense(ownerUserId: ownerUserId);
     _cloudExpense = newNote;
     return newNote;
   }
@@ -91,21 +101,6 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
   void _deleteExpenseIfEmpty(){
     if(_cloudExpense!=null && amt.text.isEmpty && desc.text.isEmpty){
       _cloudService.deleteExpense(documentId: _cloudExpense!.documentId);
-    }
-  }
-
-  void _saveExpenseIfNotEmpty() async{
-    if(_cloudExpense!=null && amt.text.isNotEmpty && desc.text.isNotEmpty){
-      await _cloudService.updateExpense(
-        documentId: _cloudExpense!.documentId,
-        category: category ?? 'Expense',
-        account: selectedAccount,
-        amount: double.parse(amt.text==''?'0':amt.text),
-        date: selectedDate!,
-        desc: desc.text,
-        currency: '₹',
-        useCategory: selectedCategory,
-      );
     }
   }
 
@@ -121,7 +116,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
         amount: double.parse(amt.text==''?'0':amt.text),
         date: selectedDate!,
         desc: desc.text,
-        currency: '₹',
+        currency: currency,
         useCategory: selectedCategory,
       );
     }
@@ -143,6 +138,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
   
   @override
   Widget build(BuildContext context) {
+    
     void onSelected(String value){
       setState(() {
         selectedCategory=value;
@@ -168,15 +164,10 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
       k='${date.year}-${date.month}-${date.day}';
       return k;
     }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Expense'),
       ),
-      // desc category amount use_category mode_of_payment currency='Rs.'
-      // 2 toggle buttons for category - Expense  and  Income 
-      // display icon textfield 
-
       body:FutureBuilder(
         future: createOrGetExpense(context),
         builder: (context, snapshot) {
@@ -244,7 +235,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.currency_rupee_sharp,
+                                      icon,
                                       size: 35,
                                     ),
                                     SizedBox(width: 10),
@@ -289,7 +280,6 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                           onSelected: onSelected,
                                           selectedValue: selectedCategory,
                                         );
-                                        dev.log(selectedCategory);
                                       },
                                       child: Row(
                                         children: [
@@ -338,7 +328,6 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                           },
                                           selectedValue: selectedAccount,
                                         );
-                                        dev.log(selectedAccount);
                                       },
                                       child: Row(
                                         children: [
@@ -351,7 +340,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                               fontSize: 16.0,
                                             ),
                                           ),
-                                          const SizedBox(width: 40),
+                                          // const SizedBox(width: 40),
                                           
                                         ],
                                       ),
@@ -371,6 +360,7 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                     
                                     //arrow button
                                     TextButton(
+                                      onPressed: getDate,
                                       child: Row(
                                         children: [
                                           const Icon(Icons.calendar_month,
@@ -386,7 +376,6 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                           
                                         ],
                                       ),
-                                      onPressed: getDate,
                                       
                                     ),
                                   ],
@@ -408,10 +397,11 @@ class _excalciAddExpenseViewState extends State<excalciAddExpenseView> {
                                     ),
                                     SizedBox(width: MediaQuery.of(context).size.width/4+20),
                                     ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async{
                                         // cancel
-                                        _cloudExpense=null;
-                                        _deleteExpenseIfEmpty();
+
+                                        await _cloudService.deleteExpense(documentId: _cloudExpense!.documentId);
+                                        // _cloudExpense=null;
                                         Navigator.of(context).pop();
                                       },
                                       child: const Text('Cancel'),

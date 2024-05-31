@@ -7,8 +7,9 @@ import 'package:excalci/services/cloud/cloud_budget.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
 import 'package:getwidget/getwidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
  
 //displays the user name
@@ -29,11 +30,18 @@ class _excalciHomeViewState extends State<excalciHomeView> {
   double expense=0;
   double budget=1;
   double percent=0.0;
+  String currency='₹';
 
 
   @override
   void initState() {
     _cloudService=FirebaseCloudStorage();
+    SharedPreferences.getInstance()
+    .then((prefs) {
+      setState(() {
+        currency=prefs.getString('currencyFormat')??currency;
+      });
+    });
     super.initState();
   }
 
@@ -56,7 +64,6 @@ class _excalciHomeViewState extends State<excalciHomeView> {
       income: true,
       expense: true
     );
-
     return  ListView(
       children: [
         //monthly overview
@@ -105,7 +112,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Spent"),
-                                        title: Text("₹ $expense"),
+                                        title: Text("$currency $expense"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
                                         onTap: () {
@@ -142,7 +149,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Spent"),
-                                        title: const Text("₹ 0.0"),
+                                        title: Text("$currency 0.0"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
                                         onTap: () {
@@ -198,7 +205,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                       child: ListTile(
                                         
                                         subtitle: const Text("Earned"),
-                                        title: Text("₹ $expense"),
+                                        title: Text("$currency $expense"),
                                         // leading: Icon(Icons.arrow_circle_up_sharp),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.income,
@@ -237,7 +244,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                       ),
                                       child: ListTile(
                                         subtitle: const Text("Earned"),
-                                        title: const Text("₹ 0.0"),
+                                        title: Text("$currency 0.0"),
                                         titleTextStyle:  AppTheme.title,
                                         subtitleTextStyle: AppTheme.expense,
                                         onTap: () {
@@ -300,7 +307,6 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 if (snapshot.hasData){
                   var expenses=snapshot.data!;
                   expenses=expenses.toList()..sort(compare);
-                  
                   return ListView.builder(
                     //disable scroll
                     physics: const NeverScrollableScrollPhysics(),
@@ -327,7 +333,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                   
                                   },
                                   subtitle: Text(expense.desc.toString()),
-                                  title: Text("₹"+expense.amount.toString()),
+                                  title: Text("$currency${expense.amount}"),
                                   trailing: Text(toDate(expense.date)),
                                   titleTextStyle:  AppTheme.income,
                                   subtitleTextStyle: AppTheme.desc,
@@ -354,7 +360,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                                 ),
                                 child: ListTile(
                                   subtitle: Text(expense.desc.toString()),
-                                  title: Text("₹"+expense.amount.toString()),
+                                  title: Text("$currency${expense.amount}"),
                                   trailing: Text(toDate(expense.date)),
                                   titleTextStyle:  AppTheme.income,
                                   subtitleTextStyle: AppTheme.desc,
@@ -406,7 +412,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                       //pop up budget view
                       Navigator.of(context).pushNamed(excalciAddBudgetRoute,arguments: budget);
                     },
-                    child: Text("Budget-₹$value",style: AppTheme.income,)
+                    child: Text("Budget-$currency$value",style: AppTheme.income,)
                   );
                 }
                 return  TextButton(
@@ -414,7 +420,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                     //pop up budget view
                     Navigator.of(context).pushNamed(excalciAddBudgetRoute);
                   },
-                  child: Text("Budget-₹0.0",style: AppTheme.income,)
+                  child: Text("Budget-$currency 0.0",style: AppTheme.income,)
                 );
               },
             ),
@@ -428,57 +434,55 @@ class _excalciHomeViewState extends State<excalciHomeView> {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Container(
-            child: StreamBuilder<double>(
-              stream: _cloudService.percentageUsed(ownerUserId: ownerUserId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return const Center(child: Text('An error occurred!'));
-                }
-                if (snapshot.hasData) {
-                  percent = snapshot.data!;
-                  if(percent<=100) {
-                    return GFProgressBar(
-                      percentage: percent/100,
-                      lineHeight: 20,
-                      alignment: MainAxisAlignment.spaceBetween,
-                      
-                      backgroundColor : const Color.fromARGB(169, 114, 114, 107),
-                      progressBarColor: const Color.fromARGB(192, 207, 56, 56),
-                      child: Text('${percent.floor()}%', textAlign: TextAlign.end,
-                                    style: TextStyle(fontSize: 14, color: AppTheme.primary),
-                                    )
-                      );
-                  }
-                  else if(percent>100){
-                    return GFProgressBar(
-                      percentage: 1.0,
-                      lineHeight: 20,
-                      alignment: MainAxisAlignment.spaceBetween, 
-                      backgroundColor : const Color.fromARGB(169, 114, 114, 107),
-                      progressBarColor: const Color.fromARGB(192, 207, 56, 56),
-                      child: Text('100%', textAlign: TextAlign.end,
-                                    style: TextStyle(fontSize: 14, color: AppTheme.primary),
-                                    )
-                      );
-                  }
-
+          child: StreamBuilder<double>(
+            stream: _cloudService.percentageUsed(ownerUserId: ownerUserId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
               }
-              return GFProgressBar(
-                    percentage: 0.0,
+              if (snapshot.hasError) {
+                return const Center(child: Text('An error occurred!'));
+              }
+              if (snapshot.hasData) {
+                percent = snapshot.data!;
+                if(percent<=100) {
+                  return GFProgressBar(
+                    percentage: percent/100,
+                    lineHeight: 20,
+                    alignment: MainAxisAlignment.spaceBetween,
+                    
+                    backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                    progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                    child: Text('${percent.floor()}%', textAlign: TextAlign.end,
+                                  style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                  )
+                    );
+                }
+                else if(percent>100){
+                  return GFProgressBar(
+                    percentage: 1.0,
                     lineHeight: 20,
                     alignment: MainAxisAlignment.spaceBetween, 
                     backgroundColor : const Color.fromARGB(169, 114, 114, 107),
                     progressBarColor: const Color.fromARGB(192, 207, 56, 56),
-                    child: Text('0%', textAlign: TextAlign.end,
+                    child: Text('100%', textAlign: TextAlign.end,
                                   style: TextStyle(fontSize: 14, color: AppTheme.primary),
                                   )
-                );
-            },
-            ),
+                    );
+                }
+          
+            }
+            return GFProgressBar(
+                  percentage: 0.0,
+                  lineHeight: 20,
+                  alignment: MainAxisAlignment.spaceBetween, 
+                  backgroundColor : const Color.fromARGB(169, 114, 114, 107),
+                  progressBarColor: const Color.fromARGB(192, 207, 56, 56),
+                  child: Text('0%', textAlign: TextAlign.end,
+                                style: TextStyle(fontSize: 14, color: AppTheme.primary),
+                                )
+              );
+          },
           ),
         ),
 

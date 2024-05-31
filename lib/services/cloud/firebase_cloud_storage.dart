@@ -7,8 +7,6 @@ import 'package:excalci/services/cloud/cloud_budget.dart';
 import 'package:excalci/services/cloud/cloud_expense.dart';
 import 'package:excalci/services/cloud/cloud_storage_constants.dart';
 import 'package:excalci/services/cloud/cloud_storage_exceptions.dart';
-
-import 'dart:developer' as dev;
 class FirebaseCloudStorage {
   final expenses = FirebaseFirestore.instance.collection('Expenses');
   final categories = FirebaseFirestore.instance.collection('Categories');
@@ -30,7 +28,7 @@ class FirebaseCloudStorage {
       amountFieldName: 0.0,
       timeFieldName: DateTime.now(),
       descFieldName: '',
-      currencyFieldName: '₹',
+      currencyFieldName: '',
       useCategoryFieldName: '',
     });
     final fetchedExpense = await document.get();
@@ -42,7 +40,7 @@ class FirebaseCloudStorage {
       amount: 0.0,
       date: DateTime.now(),
       desc: '',
-      currency: '₹',
+      currency: '',
       useCategory: '',
     );
   }
@@ -370,7 +368,6 @@ class FirebaseCloudStorage {
         allExpensesInCategoriesMap[e.useCategory]=e.amount/bu*100;
       }
     }
-    dev.log(allExpensesInCategoriesMap.toString());
     
     // allExpensesInCategoriesMap['Total']=ex;
     // allExpensesInCategoriesMap['Budget']=bu;
@@ -426,7 +423,6 @@ class FirebaseCloudStorage {
     }
     var tot=await amountSpentOverMonth(ownerUserId: ownerUserId).first;
     allExpensesInCategoriesMap['Total']=tot;
-    dev.log(allExpensesInCategoriesMap.toString());
     yield allExpensesInCategoriesMap;
   } 
 
@@ -453,7 +449,6 @@ class FirebaseCloudStorage {
     }
     var tot=await amountIncomeOverMonth(ownerUserId: ownerUserId).first;
     allExpensesInCategoriesMap['Total']=tot;
-    dev.log(allExpensesInCategoriesMap.toString());
     yield allExpensesInCategoriesMap;
   } 
 
