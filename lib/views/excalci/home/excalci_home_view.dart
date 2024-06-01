@@ -91,7 +91,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError){
-                        return const Center(child: Text('An error occurred!'));
+                        return const Center(child: Text('Not Enough data!'));
                       }
                       if (snapshot.hasData){
                         final expenses=snapshot.data!;
@@ -182,7 +182,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError){
-                        return const Center(child: Text('An error occurred!'));
+                        return const Center(child: Text('Not enough data!'));
                       }
                       if (snapshot.hasData){
                         final expenses=snapshot.data!;
@@ -302,7 +302,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError){
-                  return const Center(child: Text('An error occurred!'));
+                  return const Center(child: Text('Not enough data!'));
                 }
                 if (snapshot.hasData){
                   var expenses=snapshot.data!;
@@ -313,6 +313,9 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                     shrinkWrap: true,
                     itemCount: expenses.length>4?4:expenses.length,
                     itemBuilder: (context,index){
+                      if(expenses.length==0){
+                        return const Center(child: Text('No transactions found!'));
+                      }
                       final expense=expenses.elementAt(index);
                       //Green box for incomes
                       // grey box for expenses
@@ -400,9 +403,18 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError){
-                  return const Center(child: Text('An error occurred!'));
+                  return const Center(child: Text('Not enough data!'));
                 }
                 if (snapshot.hasData){
+                  if(snapshot.data!.length==0){
+                    return  TextButton(
+                      onPressed: (){
+                        //pop up budget view
+                        Navigator.of(context).pushNamed(excalciAddBudgetRoute);
+                      },
+                      child: Text("Budget-$currency 0.0",style: AppTheme.income,)
+                    );
+                  }
                   final budget=snapshot.data!.first;
                   final value=budget.budget;
 
@@ -441,7 +453,7 @@ class _excalciHomeViewState extends State<excalciHomeView> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
-                return const Center(child: Text('An error occurred!'));
+                return const Center(child: Text('Not enough data!'));
               }
               if (snapshot.hasData) {
                 percent = snapshot.data!;

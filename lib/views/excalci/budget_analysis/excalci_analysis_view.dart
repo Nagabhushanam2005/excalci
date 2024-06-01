@@ -68,7 +68,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(child: Text('An error occurred!'));
+                      return const Center(child: Text('No data available!'));
                     }
                     if (snapshot.hasData) {
                       final data = snapshot.data;
@@ -174,7 +174,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(child: Text('An error occurred!'));
+                      return const Center(child: Text('No data available!'));
                     }
                     if (snapshot.hasData) {
                       final data = snapshot.data;
@@ -238,7 +238,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(child: Text('An error occurred!'));
+                      return const Center(child: Text('No data available!'));
                     }
                     if (snapshot.hasData) {
                       final data = snapshot.data;
@@ -379,7 +379,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                               return const Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
-                              return const Center(child: Text('An error occurred!'));
+                              return const Center(child: Text('No data available!'));
                             }
                             if (snapshot.hasData) {
                               final data = snapshot.data.floor();
@@ -413,7 +413,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           if (snapshot.hasError) {
-                            return const Center(child: Text('An error occurred!'));
+                            return const Center(child: Text('No data available!'));
                           }
                           if (snapshot.hasData) {
                             final data = snapshot.data;
@@ -442,7 +442,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           if (snapshot.hasError) {
-                            return const Center(child: Text('An error occurred!'));
+                            return const Center(child: Text('No data available!'));
                           }
                           if (snapshot.hasData) {
                             final data = snapshot.data;
@@ -471,7 +471,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           if (snapshot.hasError) {
-                            return const Center(child: Text('An error occurred!'));
+                            return const Center(child: Text('No data available!'));
                           }
                           if (snapshot.hasData) {
                             final data = snapshot.data;
@@ -500,7 +500,7 @@ class _excalciAnalysisViewState extends State<excalciAnalysisView> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           if (snapshot.hasError) {
-                            return const Center(child: Text('An error occurred!'));
+                            return const Center(child: Text('No data available!'));
                           }
                           if (snapshot.hasData) {
                             final data = snapshot.data;
