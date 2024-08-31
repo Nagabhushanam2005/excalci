@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'excalci-10c97.appspot.com',
     measurementId: 'G-6SDZB4VJ4V',
   );
+
 }
